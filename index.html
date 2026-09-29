@@ -363,5 +363,34 @@
 </div>
 
 <script src="script.js?v=9"></script>
+
+<script>
+(function() {
+  const CARD_FACTORY_PASSWORD = "RENATINHO2000";
+  function openCardFactory(target) {
+    const entered = window.prompt("🔐 Área de Personalização\nDigite a senha para criar seu cartão:");
+    if (entered === null) return;
+    if (entered === CARD_FACTORY_PASSWORD) {
+      window.location.href = target;
+    } else {
+      window.alert("Senha incorreta.");
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('a[href*="create.html"], a[href*="card"], [data-card-factory]').forEach(function(el) {
+      const target = el.getAttribute("href") || el.dataset.cardFactory;
+      if (!target || el.dataset.passwordGateInstalled) return;
+      el.dataset.passwordGateInstalled = "1";
+      el.addEventListener("click", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        openCardFactory(target);
+      });
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
