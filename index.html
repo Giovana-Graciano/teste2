@@ -364,30 +364,119 @@
 
 <script src="script.js?v=9"></script>
 
-<script>
-(function() {
+<style id="cardFactoryPasswordStyle">
+#cardFactoryPasswordGate{
+  position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;
+  background:rgba(0,10,6,.82);backdrop-filter:blur(2px);
+}
+#cardFactoryPasswordGate.open{display:flex}
+.cfp-window{
+  width:min(520px,calc(100vw - 32px));background:#dfe8df;color:#102718;
+  border:5px ridge #fff;box-shadow:8px 8px 0 #050b08,0 0 0 2px #111;
+  font-family:"Courier New",monospace;
+}
+.cfp-titlebar{
+  display:flex;justify-content:space-between;align-items:center;
+  background:linear-gradient(#173f2a,#062415);color:#fff;
+  padding:7px 9px;border-bottom:4px ridge #fff;font-size:12px;font-weight:900;
+  text-shadow:1px 1px #000;
+}
+.cfp-close{background:#ddd;color:#111;border:3px outset #fff;font-weight:900;cursor:pointer;padding:1px 7px}
+.cfp-body{padding:22px 24px 20px;text-align:center;background:
+  repeating-linear-gradient(0deg,rgba(0,0,0,.025) 0 1px,transparent 1px 3px),#e7eee7}
+.cfp-icon{font-size:42px;margin-bottom:7px}
+.cfp-body h3{margin:3px 0 8px;font-size:20px;color:#173f2a;text-shadow:2px 2px #fff}
+.cfp-body p{margin:0 0 15px;font-size:11px;font-weight:900}
+.cfp-input{
+  width:100%;box-sizing:border-box;padding:10px 12px;background:#fff;color:#111;
+  border:4px inset #fff;font:14px "Courier New",monospace;outline:none;
+}
+.cfp-input:focus{box-shadow:0 0 0 2px #1c613a}
+.cfp-error{min-height:17px;margin-top:7px;color:#8d1738;font-size:10px;font-weight:900}
+.cfp-actions{display:flex;justify-content:center;gap:10px;margin-top:12px}
+.cfp-btn{
+  padding:8px 16px;background:linear-gradient(#fff,#d7e3d8);color:#102718;
+  border:4px outset #fff;box-shadow:3px 3px #111;cursor:pointer;
+  font:900 11px "Courier New",monospace;
+}
+.cfp-btn:active{border-style:inset;box-shadow:1px 1px #111;transform:translate(2px,2px)}
+.cfp-status{margin-top:13px;font-size:9px;color:#31553e}
+</style>
+
+<div id="cardFactoryPasswordGate" aria-hidden="true">
+  <div class="cfp-window" role="dialog" aria-modal="true" aria-labelledby="cfpTitle">
+    <div class="cfp-titlebar">
+      <span id="cfpTitle">★ FRIEND_CARD_FACTORY.EXE ★</span>
+      <button class="cfp-close" id="cfpClose" type="button" aria-label="Fechar">X</button>
+    </div>
+    <div class="cfp-body">
+      <div class="cfp-icon">🔐</div>
+      <h3>ÁREA DE PERSONALIZAÇÃO</h3>
+      <p>THIS AREA IS PASSWORD PROTECTED</p>
+      <input id="cfpPassword" class="cfp-input" type="password" autocomplete="off" placeholder="Digite a senha...">
+      <div id="cfpError" class="cfp-error"></div>
+      <div class="cfp-actions">
+        <button id="cfpEnter" class="cfp-btn" type="button">▶ ENTRAR</button>
+        <button id="cfpCancel" class="cfp-btn" type="button">✕ CANCELAR</button>
+      </div>
+      <div class="cfp-status">★ FRIEND ACCESS • RENATINHO 2000 ★</div>
+    </div>
+  </div>
+</div>
+
+<script id="cardFactoryPasswordScript">
+(function(){
   const CARD_FACTORY_PASSWORD = "RENATINHO2000";
-  function openCardFactory(target) {
-    const entered = window.prompt("🔐 Área de Personalização\nDigite a senha para criar seu cartão:");
-    if (entered === null) return;
-    if (entered === CARD_FACTORY_PASSWORD) {
+  const gate = document.getElementById("cardFactoryPasswordGate");
+  const input = document.getElementById("cfpPassword");
+  const error = document.getElementById("cfpError");
+  const close = document.getElementById("cfpClose");
+  const cancel = document.getElementById("cfpCancel");
+  const enter = document.getElementById("cfpEnter");
+  let target = "create.html";
+
+  function closeGate(){
+    gate.classList.remove("open");
+    gate.setAttribute("aria-hidden","true");
+    input.value="";
+    error.textContent="";
+  }
+  function openGate(url){
+    target = url || "create.html";
+    gate.classList.add("open");
+    gate.setAttribute("aria-hidden","false");
+    error.textContent="";
+    setTimeout(function(){input.focus()},30);
+  }
+  function submit(){
+    if(input.value === CARD_FACTORY_PASSWORD){
       window.location.href = target;
-    } else {
-      window.alert("Senha incorreta.");
+      return;
     }
+    error.textContent = "✖ SENHA INCORRETA — TENTE NOVAMENTE.";
+    input.select();
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll('a[href*="create.html"], a[href*="card"], [data-card-factory]').forEach(function(el) {
-      const target = el.getAttribute("href") || el.dataset.cardFactory;
-      if (!target || el.dataset.passwordGateInstalled) return;
-      el.dataset.passwordGateInstalled = "1";
-      el.addEventListener("click", function(ev) {
+  document.addEventListener("DOMContentLoaded",function(){
+    document.querySelectorAll('a[href*="create.html"]').forEach(function(el){
+      if(el.dataset.passwordGateInstalled) return;
+      el.dataset.passwordGateInstalled="1";
+      el.addEventListener("click",function(ev){
         ev.preventDefault();
         ev.stopPropagation();
-        openCardFactory(target);
+        openGate(el.getAttribute("href"));
       });
     });
+  });
+  enter.addEventListener("click",submit);
+  close.addEventListener("click",closeGate);
+  cancel.addEventListener("click",closeGate);
+  input.addEventListener("keydown",function(ev){
+    if(ev.key==="Enter") submit();
+    if(ev.key==="Escape") closeGate();
+  });
+  gate.addEventListener("click",function(ev){
+    if(ev.target===gate) closeGate();
   });
 })();
 </script>
