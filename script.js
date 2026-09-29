@@ -149,6 +149,7 @@ function openCard(id){
   const t=themes[theme]||themes.y2k;
   const emojis=Array.isArray(cfg.emojis)?cfg.emojis.filter(Boolean):[];
   const font=cfg.font||"inherit";
+  /* Selected card font override */
   const textColor=cfg.textColor||"#111";
   const photoStyle=cfg.photoStyle||"classic";
 
@@ -167,7 +168,7 @@ function openCard(id){
   cardContent.style.fontFamily=font;
 
   cardContent.innerHTML=`
-    <div class="v33-card" style="--v33-bg:${t.bg};--v33-accent:${t.accent};--v33-text:${esc(textColor)}">
+    <div class="v33-card" style="--v33-bg:${t.bg};--v33-accent:${t.accent};--v33-text:${esc(textColor)};--card-font:${esc(font)};font-family:${esc(font)}">
       <div class="v33-scanlines"></div>
       <div class="v33-emoji-layer">${emojiHTML}</div>
 

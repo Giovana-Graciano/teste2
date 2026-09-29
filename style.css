@@ -207,6 +207,8 @@ button{font:inherit}.hidden{display:none!important}.screen{min-height:100vh;widt
 @media(max-width:720px){.v33-header{grid-template-columns:70px 1fr}.v33-icon{width:64px;height:64px;font-size:42px}.v33-sticker{display:none}.v33-title-block h3{font-size:22px}.v33-photo img{width:140px;height:140px}.v33-gif img{max-width:75%}}
 
 
+/* Selected card font must override legacy fixed-font rules */
+.v33-card .v33-title-block h3,.v33-card .v33-from,.v33-card .v34-message-text{font-family:var(--card-font)!important}
 /* V34 — final micro-polish */
 .v34-message-label{
   display:inline-block;
@@ -265,3 +267,10 @@ button{font:inherit}.hidden{display:none!important}.screen{min-height:100vh;widt
 .audio-error{margin-top:5px;padding:5px;background:#ffe4e4;border:2px solid #a40032;color:#700020;font:700 10px "Courier New",monospace}
 
 .audio-preview-label{font:900 10px "Courier New",monospace;margin:6px 0 4px}.audio-preview-btn{margin-top:7px}.v10-music-extra audio{width:100%;max-width:360px;height:38px}.audio-preview-status{display:block;margin-top:5px;font:700 9px "Courier New",monospace}
+
+/* FINAL FONT FIX — Card Factory selected font */
+.v33-card .v33-title-block h3,
+.v33-card .v33-from,
+.v33-card .v34-message-text {
+  font-family: var(--card-font) !important;
+}
